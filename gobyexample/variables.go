@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+	"time"
+)
 
 func main() {
 	var a string = "initial"
@@ -15,6 +19,16 @@ func main() {
 	var e int
 	fmt.Println(e)
 
-	f := "apple"
+	yearNum, weekNum := time.Now().ISOWeek()
+	year := strconv.Itoa(yearNum)
+	fmt.Println(year)
+	week := strconv.Itoa(weekNum)
+	fmt.Println(week)
+
+	f := fmt.Sprintf("%02d", weekNum)
+	r := fmt.Sprintf("%02d", 11)
+	// fmt.Printf("%02d", 12)
 	fmt.Println(f)
+	fmt.Println(r)
+
 }

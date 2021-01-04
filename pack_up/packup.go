@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -23,10 +24,12 @@ func main() {
 
 	// Create new directory
 	yearNum, weekNum := time.Now().ISOWeek()
+	week := fmt.Sprintf("%02d", weekNum)
 	year := strconv.Itoa(yearNum)
-	week := strconv.Itoa(weekNum)
+	fmt.Println(week)
 	name := strings.Join([]string{year, week, companyName}, "-")
 	newDir := filepath.Join(appsPath, name)
+	fmt.Println(newDir)
 	os.Mkdir(newDir, 0777) // TODO: Handle ERROR
 
 	// Copy cv and coverletter
