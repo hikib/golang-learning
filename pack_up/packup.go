@@ -9,32 +9,46 @@ import (
 	"time"
 )
 
+// Handles my files while writing job applications.
+// Moves the temporary files from 'docs' to a the archive 'apps'
 func main() {
-	// Handles my files while writing applications.
-	// Moves the temporary files from 'docs' to a the archive 'apps'
-	// TODO: Seperate into functions?
-
-	// Parse input
-	repoPath, _ := filepath.Abs(os.Args[1]) // TODO: Exists?
-	companyName := os.Args[2]
-
 	// Get directory paths
-	appsPath := filepath.Join(repoPath, "apps") // TODO: Exists?
-	docsPath := filepath.Join(repoPath, "docs") // TODO: Exists?
+	repoPath, companyName := parseInput()
+	archive := filepath.Join(repoPath, "apps") // TODO: Exists?
+	docs := filepath.Join(repoPath, "docs")    // TODO: Exists?
 
 	// Create new directory
+	dirName := getNewDirName(companyName)
+	dirPath := filepath.Join(archive, dirName)
+	os.Mkdir(dirPath, 0777) // TODO: Handle ERROR
+
+	// Move cv and coverletter
+	files := map[string]string{
+		"ansøgning.pdf": "coverletter/output/coverletter.pdf",
+		"cv.pdf":        "cv/output/cv.pdf",
+	}
+	for name, file := range files {
+		fromPath := filepath.Join(docs, file)
+		toPath := filepath.Join(dirPath, name)
+		// TODO: Handle ERROR
+		os.Rename(fromPath, toPath)
+	}
+}
+
+// Get path to 'jobsearch' directory and company name from arguments
+func parseInput() (string, string) {
+	repoPath, _ := filepath.Abs(os.Args[1]) // TODO: Error?
+	companyName := os.Args[2]
+
+	return repoPath, companyName
+}
+
+// Combining current year, week number and company name
+func getNewDirName(companyName string) string {
+	// Get current year and week number as strings
 	yearNum, weekNum := time.Now().ISOWeek()
 	week := fmt.Sprintf("%02d", weekNum)
 	year := strconv.Itoa(yearNum)
-	fmt.Println(week)
-	name := strings.Join([]string{year, week, companyName}, "-")
-	newDir := filepath.Join(appsPath, name)
-	fmt.Println(newDir)
-	os.Mkdir(newDir, 0777) // TODO: Handle ERROR
 
-	// Copy cv and coverletter
-	app := filepath.Join(docsPath, "coverletter/output/coverletter.pdf")
-	cv := filepath.Join(docsPath, "cv/output/cv.pdf")
-	os.Rename(app, filepath.Join(newDir, "ansøgning.pdf")) // TODO: Handle ERROR
-	os.Rename(cv, filepath.Join(newDir, "cv.pdf"))         // TODO: Handle ERROR
+	return strings.Join([]string{year, week, companyName}, "-")
 }
